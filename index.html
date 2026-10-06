@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>قنوات العالم</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0b1118; --panel:#111a26; --panel2:#172233; --line:#1f2c3f;
+  --text:#eaf0f8; --mute:#8795aa; --live:#ff4b5c; --ok:#3ddc97;
+  --r:14px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+html{scroll-behavior:smooth}
+body{background:var(--bg);background-image:radial-gradient(900px 380px at 85% -80px,rgba(255,75,92,.09),transparent 70%);background-repeat:no-repeat;color:var(--text);font-family:"IBM Plex Sans Arabic",system-ui,Tahoma,sans-serif;font-size:15px;line-height:1.5}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+::selection{background:rgba(255,75,92,.35)}
+:focus-visible{outline:2px solid var(--live);outline-offset:2px}
+*{scrollbar-width:thin;scrollbar-color:#2a3a52 transparent}
+.ico{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+/* top bar */
+.top{position:sticky;top:0;z-index:20;height:64px;background:rgba(11,17,24,.88);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;padding:0 20px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:1.1rem;margin-inline-end:10px;white-space:nowrap}
+.mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(145deg,#ff6b78,#e0344a);display:grid;place-items:center;box-shadow:0 6px 16px -6px rgba(255,75,92,.7)}
+.mark svg{width:16px;height:16px;fill:#fff}
+.search{flex:1;min-width:0;max-width:440px;display:flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:0 12px;height:40px;color:var(--mute)}
+.search:focus-within{border-color:var(--live);color:var(--text)}
+.search input{flex:1;min-width:0;background:none;border:0;outline:0;height:100%}
+.search input::placeholder{color:var(--mute)}
+kbd{font:inherit;font-size:.72rem;border:1px solid var(--line);border-radius:6px;padding:0 6px;color:var(--mute)}
+.field{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:0 12px;height:40px;min-width:0}
+#country{max-width:180px}
+.btn{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:9px 14px}
+.btn:hover{border-color:var(--mute)}
+.ib2{width:40px;height:40px;display:grid;place-items:center;background:var(--panel);border:1px solid var(--line);border-radius:12px;color:var(--mute)}
+.ib2:hover{color:var(--text);border-color:var(--mute)}
+.ib2.on{color:var(--ok);border-color:rgba(61,220,151,.5)}
+.top .spacer{flex:1}
+
+/* layout */
+.body{display:grid;grid-template-columns:248px 1fr}
+nav{border-inline-end:1px solid var(--line);padding:18px 12px;position:sticky;top:64px;align-self:start;height:calc(100vh - 64px);overflow:auto}
+nav button{display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;background:none;border:0;border-inline-start:3px solid transparent;border-radius:10px;padding:8px 12px;text-align:start;color:var(--mute)}
+nav button:hover{background:var(--panel);color:var(--text)}
+nav button[aria-pressed="true"]{background:rgba(255,75,92,.1);color:var(--text);border-inline-start-color:var(--live)}
+nav small{color:var(--mute);font-size:.74rem;background:rgba(255,255,255,.05);border-radius:20px;padding:0 8px;font-variant-numeric:tabular-nums}
+nav .seg{display:flex;gap:4px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:3px;margin-bottom:12px;flex:none}
+nav .seg button{justify-content:center;flex:1;padding:6px 14px;border:0;border-radius:9px}
+nav .seg button[aria-pressed="true"]{background:var(--panel2)}
+nav hr{border:0;border-top:1px solid var(--line);margin:12px 4px}
+#note{color:#ffb4bc;font-size:.82rem;margin:-6px 0 16px;direction:ltr;text-align:left;white-space:pre-wrap}
+
+main{padding:26px 28px 80px;min-width:0}
+.head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+h2{margin:0;font-size:1.75rem;font-weight:700;letter-spacing:-.01em}
+#count{color:var(--mute);font-size:.82rem;border:1px solid var(--line);border-radius:20px;padding:1px 12px}
+.stats{display:flex;gap:10px;margin-bottom:26px;flex-wrap:wrap}
+.stats span{color:var(--mute);font-size:.85rem;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:5px 12px}
+.stats b{color:var(--text);font-weight:700;font-variant-numeric:tabular-nums;margin-inline-end:4px}
+
+/* recent */
+.recent{margin-bottom:30px}
+.recent h3{margin:0 0 12px;font-size:1rem;font-weight:700}
+.rrow{display:flex;gap:12px;overflow-x:auto;padding:4px 2px 10px}
+.rrow .card{flex:0 0 160px}
+.sec-t{margin:0 0 12px;font-size:1rem;font-weight:700}
+
+/* cards */
+#grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px}
+#grid.dense{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+#grid.dense .thumb{aspect-ratio:16/9}
+.card{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;transition:border-color .15s,transform .15s,box-shadow .15s}
+.card:hover,.card:focus-within{border-color:rgba(255,75,92,.55);transform:translateY(-3px);box-shadow:0 14px 30px -14px rgba(0,0,0,.8)}
+.open{display:block;width:100%;background:none;border:0;padding:0;text-align:start}
+.thumb{position:relative;aspect-ratio:16/10;background:radial-gradient(120% 120% at 50% 0%,#1e2c42 0%,#0d141e 70%);display:flex;align-items:center;justify-content:center}
+.thumb img{max-width:76%;max-height:72%;object-fit:contain;filter:drop-shadow(0 3px 8px rgba(0,0,0,.5))}
+.thumb>span{font-size:2rem;font-weight:700;color:#4a5b75}
+.play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(8,12,18,.55);opacity:0;transition:opacity .15s}
+.play i{width:46px;height:46px;border-radius:50%;background:var(--live);display:grid;place-items:center;box-shadow:0 8px 22px rgba(255,75,92,.5)}
+.play svg{width:18px;height:18px;fill:#fff;margin-inline-end:-2px}
+.card:hover .play,.open:focus-visible .play{opacity:1}
+.info{padding:11px 13px 13px}
+.nm{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sub{color:var(--mute);font-size:.8rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+.fav{position:absolute;top:8px;inset-inline-start:8px;background:rgba(11,17,24,.78);backdrop-filter:blur(4px);border:1px solid var(--line);border-radius:9px;width:32px;height:32px;line-height:1;font-size:1.05rem;color:var(--mute);opacity:0;transition:opacity .15s}
+.card:hover .fav,.card:focus-within .fav,.fav[aria-pressed="true"]{opacity:1}
+.fav[aria-pressed="true"]{color:#ffc857}
+@media (hover:none){.fav{opacity:1}}
+.empty{grid-column:1/-1;text-align:center;color:var(--mute);padding:70px 10px}
+.empty svg{width:44px;height:44px;margin-bottom:10px;opacity:.6}
+.empty pre{white-space:pre-wrap;direction:ltr;text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;display:inline-block;max-width:100%}
+.sk{aspect-ratio:16/12;border-radius:var(--r);border:1px solid var(--line);background:linear-gradient(90deg,var(--panel) 25%,#18243a 50%,var(--panel) 75%);background-size:200% 100%;animation:sh 1.4s linear infinite}
+@keyframes sh{to{background-position:-200% 0}}
+
+/* toast + back to top */
+#toast{position:fixed;bottom:26px;left:50%;transform:translate(-50%,20px);background:#1d2a3f;border:1px solid var(--line);border-radius:12px;padding:10px 18px;opacity:0;pointer-events:none;transition:.2s;z-index:90;max-width:90vw;text-align:center}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+#totop{position:fixed;bottom:24px;inset-inline-end:24px;width:44px;height:44px;border-radius:50%;background:var(--panel2);border:1px solid var(--line);display:none;place-items:center;z-index:30;box-shadow:0 8px 20px rgba(0,0,0,.5)}
+#totop.show{display:grid}
+
+/* player */
+#modal{position:fixed;inset:0;background:rgba(6,9,14,.95);display:none;align-items:center;justify-content:center;padding:16px;z-index:50}
+#modal.open{display:flex}
+.box{width:min(1040px,100%)}
+.pbar{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.pbar .t{flex:1;min-width:140px}
+.pbar .t b{display:block;font-size:1.1rem}
+.pbar .t span{color:var(--mute);font-size:.85rem}
+.pbar .btn.primary{background:var(--live);border-color:var(--live);color:#fff;font-weight:700}
+.stage{position:relative;background:#000;border-radius:var(--r);overflow:hidden;user-select:none}
+.stage video{width:100%;max-height:72vh;aspect-ratio:16/9;display:block;background:#000;object-fit:contain}
+.stage:fullscreen{border-radius:0}
+.stage:fullscreen video{max-height:none;height:100%}
+.ov{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:rgba(0,0,0,.45);text-align:center;padding:20px}
+.ov.show{display:flex}
+.spin{width:44px;height:44px;border-radius:50%;border:3px solid rgba(255,255,255,.2);border-top-color:var(--live);animation:sp .8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.ov p{margin:0;max-width:460px;white-space:pre-line;line-height:1.7}
+.ov .row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.ctl{position:absolute;inset-inline:0;bottom:0;display:flex;align-items:center;gap:8px;padding:30px 12px 10px;background:linear-gradient(transparent,rgba(0,0,0,.85));transition:opacity .25s}
+.stage.idle .ctl{opacity:0}
+.stage.idle{cursor:none}
+.ib{background:none;border:0;color:#fff;width:38px;height:38px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center}
+.ib:hover{background:rgba(255,255,255,.15)}
+.ib svg{width:22px;height:22px;fill:currentColor}
+#vol{width:90px;accent-color:var(--live)}
+.live{display:inline-flex;align-items:center;gap:6px;font-size:.8rem;font-weight:700;background:rgba(255,75,92,.18);color:#ff8a96;border-radius:20px;padding:3px 10px}
+.live i{width:7px;height:7px;border-radius:50%;background:var(--live)}
+.tag{font-size:.75rem;color:#cbd5e3;border:1px solid rgba(255,255,255,.25);border-radius:6px;padding:2px 7px}
+#quality{background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.25);border-radius:8px;padding:5px 8px;color:#fff;font-size:.85rem}
+#quality[hidden]{display:none}
+.sp{flex:1}
+#err{color:#ff9aa5;min-height:1.5em;margin-top:10px;font-size:.9rem}
+.keys{color:var(--mute);font-size:.78rem;margin-top:4px}
+@media (max-width:860px){
+  .top{height:auto;flex-wrap:wrap;padding:10px 14px;gap:8px}
+  .brand{order:1;flex:1}
+  .search{order:3;flex-basis:100%;max-width:none}
+  .search kbd{display:none}
+  #country,#sort{order:4;flex:1}
+  .top .spacer{display:none}
+  .ib2{order:2}
+  .body{grid-template-columns:1fr}
+  nav{position:static;height:auto;border-inline-end:0;border-bottom:1px solid var(--line);display:flex;gap:6px;overflow-x:auto;padding:10px 12px}
+  nav button{width:auto;white-space:nowrap;gap:8px;border:1px solid var(--line)}
+  nav button[aria-pressed="true"]{border-color:var(--live)}
+  nav hr{display:none}
+  main{padding:18px 14px 80px}
+  h2{font-size:1.4rem}
+  #grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+  #grid.dense{grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
+  .rrow .card{flex-basis:140px}
+}
+@media (prefers-reduced-motion:reduce){.card,#toast{transition:none}.card:hover{transform:none}.spin,.sk{animation:none}html{scroll-behavior:auto}}
+#pdlg{background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:16px;padding:22px;width:min(640px,94vw)}
+#pdlg::backdrop{background:rgba(5,8,12,.8)}
+#pdlg h3{margin:0 0 8px}
+#pdlg p{color:var(--mute);margin:6px 0;line-height:1.7;font-size:.9rem}
+#pdlg textarea{width:100%;height:150px;direction:ltr;background:#0b1118;border:1px solid var(--line);border-radius:10px;color:#b9c6da;font:12px/1.5 ui-monospace,Consolas,monospace;padding:10px;resize:vertical}
+#pdlg input{width:100%;direction:ltr;margin:6px 0 14px;height:40px;background:#0b1118;border:1px solid var(--line);border-radius:10px;padding:0 12px}
+#pdlg .row{display:flex;gap:8px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span class="mark"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span><span>قنوات العالم</span></div>
+  <label class="search">
+    <svg class="ico" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+    <input id="q" type="search" placeholder="ابحث باسم القناة" aria-label="بحث"><kbd>/</kbd>
+  </label>
+  <select id="country" class="field" aria-label="الدولة"><option value="">كل الدول</option></select>
+  <select id="sort" class="field" aria-label="الترتيب"><option value="def">الترتيب الافتراضي</option><option value="name">حسب الاسم</option></select>
+  <span class="spacer"></span>
+  <button class="ib2" id="dense" title="تبديل حجم الكروت" aria-label="تبديل حجم الكروت"><svg class="ico" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></button>
+  <button class="ib2" id="refresh" title="تحديث القائمة" aria-label="تحديث القائمة"><svg class="ico" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.7M20 4v5h-5"/></svg></button>
+  <button class="ib2" id="proxy" title="وسيط التشغيل" aria-label="وسيط التشغيل"><svg class="ico" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></button>
+</header>
+
+<div class="body">
+  <nav id="cats" aria-label="الفئات"></nav>
+  <main>
+    <div class="head"><h2 id="h">جميع القنوات</h2><span id="count"></span></div>
+    <div class="stats" id="stats"></div>
+    <div id="note"></div>
+    <section class="recent" id="recent" hidden></section>
+    <div id="grid"></div>
+    <div id="sentinel" style="height:1px"></div>
+  </main>
+</div>
+
+<div id="modal" role="dialog" aria-modal="true" aria-label="المشغل">
+  <div class="box">
+    <div class="pbar">
+      <div class="t"><b id="pname"></b><span id="pmeta"></span></div>
+      <button class="btn" id="prev">السابقة</button>
+      <button class="btn" id="next">التالية</button>
+      <button class="btn" id="pfav">☆ مفضلة</button>
+      <button class="btn" id="copy">نسخ الرابط</button>
+      <button class="btn" id="dl">ملف M3U</button>
+      <button class="btn primary" id="close">إغلاق</button>
+    </div>
+    <div class="stage" id="stage">
+      <video id="v" playsinline></video>
+      <div class="ov" id="ov"></div>
+      <div class="ctl" id="ctl">
+        <button class="ib" id="bplay" aria-label="تشغيل/إيقاف"></button>
+        <button class="ib" id="bmute" aria-label="كتم"></button>
+        <input id="vol" type="range" min="0" max="1" step="0.05" aria-label="مستوى الصوت">
+        <span class="live"><i></i>مباشر</span>
+        <span class="sp"></span>
+        <span class="tag" id="etag"></span>
+        <select id="quality" aria-label="الجودة" hidden></select>
+        <button class="ib" id="bpip" aria-label="صورة داخل صورة"></button>
+        <button class="ib" id="bfs" aria-label="ملء الشاشة"></button>
+      </div>
+    </div>
+    <div id="err"></div>
+    <div class="keys">اختصارات: مسافة تشغيل/إيقاف، M كتم، F ملء الشاشة، ↑ ↓ الصوت، ← التالية، → السابقة</div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.5.15/hls.min.js"></script>
+<dialog id="pdlg">
+  <h3>وسيط التشغيل</h3>
+  <p>أغلب القنوات تفشل في المتصفح بسبب قيد CORS. الحل وسيط مجاني: أنشئ Worker في Cloudflare، والصق الكود التالي فيه ثم انشره، وبعدها الصق رابطه بالأسفل مع <b>?url=</b> في آخره.</p>
+  <textarea id="wtxt" readonly></textarea>
+  <div class="row" style="margin:8px 0 12px"><button class="btn" id="wcopy">نسخ الكود</button></div>
+  <p>رابط الوسيط (مثال: https://name.workers.dev/?url=)، واتركه فارغاً لتعطيله:</p>
+  <input id="pinput" type="url" placeholder="https://name.workers.dev/?url=">
+  <div class="row"><button class="btn" id="psave" style="background:var(--live);border-color:var(--live);color:#fff;font-weight:700">حفظ</button><button class="btn" id="pclose">إلغاء</button></div>
+</dialog>
+<div id="toast" role="status"></div>
+<button id="totop" aria-label="للأعلى"><svg class="ico" viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
+
+<script type="text/plain" id="wcode">// Cloudflare Worker: وسيط CORS لقنوات HLS. الاستخدام: https://NAME.workers.dev/?url=<الرابط>
+export default {
+  async fetch(req) {
+    const u = new URL(req.url);
+    const cors = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "*" };
+    if (req.method === "OPTIONS") return new Response(null, { headers: cors });
+    const target = u.searchParams.get("url");
+    if (!target || !/^https?:\/\//i.test(target)) return new Response("missing url", { status: 400, headers: cors });
+
+    const r = await fetch(target, { headers: { "User-Agent": "Mozilla/5.0" }, redirect: "follow" });
+    const ct = r.headers.get("content-type") || "";
+    const isPlaylist = /mpegurl/i.test(ct) || /\.m3u8(\?|$)/i.test(target);
+
+    if (isPlaylist) {
+      const base = r.url, self = u.origin + u.pathname + "?url=";
+      const wrap = x => self + encodeURIComponent(new URL(x, base).href);
+      const out = (await r.text()).split("\n").map(line => {
+        const t = line.trim();
+        if (!t) return line;
+        if (t.startsWith("#")) return line.replace(/URI="([^"]+)"/g, (m, x) => 'URI="' + wrap(x) + '"');
+        return wrap(t);
+      }).join("\n");
+      return new Response(out, { headers: { ...cors, "Content-Type": "application/vnd.apple.mpegurl" } });
+    }
+    return new Response(r.body, { status: r.status, headers: { ...cors, "Content-Type": ct } });
+  }
+};
+</script>
+<script>
+const BASE = "https://iptv-org.github.io/iptv/";
+const CATS = ["animation","auto","business","classic","comedy","cooking","culture","documentary","education","entertainment","family","general","interactive","kids","legislative","lifestyle","movies","music","news","outdoor","public","relax","religious","science","series","shop","sports","travel","weather","undefined","xxx"];
+const CAT_AR = {animation:"رسوم متحركة",auto:"سيارات",business:"أعمال",classic:"كلاسيكي",comedy:"كوميديا",cooking:"طبخ",culture:"ثقافة",documentary:"وثائقي",education:"تعليم",entertainment:"ترفيه",family:"عائلي",general:"عام",interactive:"تفاعلي",kids:"أطفال",legislative:"تشريعي",lifestyle:"نمط الحياة",movies:"أفلام",music:"موسيقى",news:"أخبار",outdoor:"الهواء الطلق",public:"عامة",relax:"استرخاء",religious:"ديني",science:"علوم",series:"مسلسلات",shop:"تسوق",sports:"رياضة",travel:"سفر",weather:"الطقس",undefined:"غير مصنّفة"};
+const PAGE = 60;
+const $ = id => document.getElementById(id);
+
+let ALL = [], view = [], shown = 0, cur = -1, hls = null;
+let st = {cat:"all", country:"", q:"", mode:"cat", sort:"def"};
+const coll = new Intl.Collator("ar", {numeric:true});
+let recent = []; try{ recent = JSON.parse(localStorage.getItem("recent") || "[]"); }catch(e){}
+let tt; function toast(m){ const t = $("toast"); t.textContent = m; t.classList.add("show"); clearTimeout(tt); tt = setTimeout(() => t.classList.remove("show"), 2400); }
+const SK = '<div class="sk"></div>'.repeat(14);
+let favs = new Set();
+try{ favs = new Set(JSON.parse(localStorage.getItem("fav")||"[]")); }catch(e){}
+const saveFavs = () => { try{ localStorage.setItem("fav", JSON.stringify([...favs])); }catch(e){} };
+
+let regionNames = null;
+try{ regionNames = new Intl.DisplayNames(["ar"],{type:"region"}); }catch(e){}
+const cName = code => {
+  if(!code) return "";
+  const c = code === "uk" ? "GB" : code.toUpperCase();
+  try{ return (regionNames && regionNames.of(c)) || c; }catch(e){ return c; }
+};
+const catName = k => CAT_AR[k.toLowerCase()] || k;
+
+function parseM3U(text, forced){
+  const out = []; let m = null;
+  for(let line of text.split(/\r?\n/)){
+    line = line.trim();
+    if(line.startsWith("#EXTINF")){
+      const g = k => { const r = line.match(new RegExp(k + '="([^"]*)"')); return r ? r[1] : ""; };
+      const id = g("tvg-id").split("@")[0];
+      const mc = id.match(/\.([a-z]{2})$/i);
+      const cats = forced ? [forced] : g("group-title").split(";").map(s=>s.trim().toLowerCase()).filter(Boolean);
+      m = {name: line.slice(line.indexOf(",")+1).trim() || id, logo: g("tvg-logo"),
+           cats: cats.length ? cats : ["undefined"], country: mc ? mc[1].toLowerCase() : ""};
+    } else if(line && !line.startsWith("#") && m){
+      out.push({...m, url: line}); m = null;
+    }
+  }
+  return out;
+}
+
+const TTL = 12 * 3600 * 1000;
+const idb = () => new Promise((res, rej) => { const r = indexedDB.open("tvcache", 1); r.onupgradeneeded = () => r.result.createObjectStore("kv"); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); });
+async function cacheGet(){ try{ const d = await idb(); return await new Promise(res => { const q = d.transaction("kv").objectStore("kv").get("all"); q.onsuccess = () => res(q.result || null); q.onerror = () => res(null); }); }catch(e){ return null; } }
+async function cacheSet(data){ try{ const d = await idb(); d.transaction("kv","readwrite").objectStore("kv").put({t: Date.now(), data}, "all"); }catch(e){} }
+
+async function fetchText(u){ const r = await fetch(u); if(!r.ok) throw new Error("HTTP " + r.status); return r.text(); }
+async function load(force){
+  $("note").textContent = "";
+  $("grid").className = ""; $("grid").innerHTML = SK; $("count").textContent = "جارٍ الجلب...";
+  const cached = await cacheGet();
+  if(!force && cached && Date.now() - cached.t < TTL){
+    ALL = cached.data;
+    $("note").textContent = "";
+  } else {
+    const jobs = [{u: BASE + "index.m3u", cat: null}, ...CATS.map(c => ({u: BASE + "categories/" + c + ".m3u", cat: c}))];
+    const map = new Map(), fails = []; let done = 0;
+    await Promise.all(jobs.map(async j => {
+      try{
+        for(const c of parseM3U(await fetchText(j.u), j.cat)){
+          const e = map.get(c.url);
+          if(!e) map.set(c.url, c);
+          else {
+            c.cats.forEach(k => { if(!e.cats.includes(k)) e.cats.push(k); });
+            if(!e.logo && c.logo) e.logo = c.logo;
+            if(!e.country && c.country) e.country = c.country;
+          }
+        }
+      }catch(err){ fails.push(j.u.replace(BASE, "") + "  (" + err.message + ")"); }
+      done++;
+      if(!ALL.length) $("count").textContent = "جارٍ الجلب " + done + " / " + jobs.length;
+    }));
+    ALL = [...map.values()];
+    ALL.forEach(c => { if(c.cats.length > 1) c.cats = c.cats.filter(k => k !== "undefined"); });
+    if(fails.length) $("note").textContent = "تعذّر جلب " + fails.length + " مصدر:\n" + fails.join("\n");
+    if(!ALL.length && cached){ ALL = cached.data; $("note").textContent = "تعذّر الجلب من الإنترنت، تم عرض آخر نسخة محفوظة."; }
+    else if(!ALL.length){
+      $("grid").innerHTML = '<div class="empty"><p>تعذّر جلب القنوات. تحقق من الاتصال بالإنترنت ثم اضغط زر التحديث.</p></div>'; $("count").textContent = "";
+      return;
+    } else cacheSet(ALL);
+  }
+  buildNav(); buildCountries(); stats(); setDense(); apply();
+}
+
+function stats(){
+  const cc = new Set(ALL.map(c=>c.country).filter(Boolean));
+  const cs = new Set(ALL.flatMap(c=>c.cats));
+  const n = x => x.toLocaleString("ar-EG");
+  $("stats").innerHTML = "<span><b>" + n(ALL.length) + "</b>قناة</span><span><b>" + n(cc.size) + "</b>دولة</span><span><b>" + n(cs.size) + "</b>فئة</span>";
+}
+function buildNav(){
+  const catCnt = new Map(), couCnt = new Map();
+  ALL.forEach(c => {
+    c.cats.forEach(k => catCnt.set(k, (catCnt.get(k)||0) + 1));
+    if(c.country) couCnt.set(c.country, (couCnt.get(c.country)||0) + 1);
+  });
+  const nav = $("cats"); nav.innerHTML = "";
+  const seg = document.createElement("div"); seg.className = "seg";
+  [["cat","الفئات"],["country","الدول"]].forEach(([m, l]) => {
+    const b = document.createElement("button"); b.dataset.mode = m; b.textContent = l;
+    b.setAttribute("aria-pressed", st.mode === m); seg.appendChild(b);
+  });
+  nav.appendChild(seg);
+  const add = (kind, key, label, n) => {
+    const b = document.createElement("button");
+    b.dataset.kind = kind; b.dataset.k = key;
+    const on = kind === "all" ? (st.cat === "all" && !(st.mode === "country" && st.country))
+             : kind === "fav" ? st.cat === "fav"
+             : kind === "cat" ? st.cat === key
+             : (st.country === key && st.cat !== "fav");
+    b.setAttribute("aria-pressed", on);
+    const s = document.createElement("span"); s.textContent = label;
+    const sm = document.createElement("small"); sm.textContent = n.toLocaleString("ar-EG");
+    b.append(s, sm); nav.appendChild(b); return b;
+  };
+  add("all", "", "جميع القنوات", ALL.length);
+  add("fav", "", "المفضلة", favs.size).id = "favbtn";
+  nav.appendChild(document.createElement("hr"));
+  if(st.mode === "cat") [...catCnt.entries()].sort((a,b) => b[1]-a[1]).forEach(([k, n]) => add("cat", k, catName(k), n));
+  else [...couCnt.entries()].sort((a,b) => b[1]-a[1]).forEach(([k, n]) => add("country", k, cName(k), n));
+}
+
+function buildCountries(){
+  const cnt = new Map();
+  ALL.forEach(c => c.country && cnt.set(c.country,(cnt.get(c.country)||0)+1));
+  const sel = $("country");
+  sel.innerHTML = '<option value="">كل الدول</option>';
+  [...cnt.keys()].map(k=>[k,cName(k)]).sort((a,b)=>a[1].localeCompare(b[1],"ar"))
+    .forEach(([k,n]) => { const o = document.createElement("option"); o.value = k; o.textContent = n + " (" + cnt.get(k) + ")"; sel.appendChild(o); });
+  sel.value = st.country;
+}
+
+const PLAY = '<div class="play"><i><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></i></div>';
+function makeCard(c, idx){
+  const card = document.createElement("article"); card.className = "card";
+  const open = document.createElement("button"); open.className = "open";
+  if(idx >= 0) open.dataset.i = idx; else open.dataset.u = c.url;
+  const th = document.createElement("div"); th.className = "thumb";
+  const initial = () => { th.innerHTML = ""; const s = document.createElement("span"); s.textContent = [...c.name][0] || "?"; th.appendChild(s); th.insertAdjacentHTML("beforeend", PLAY); };
+  if(c.logo){ const im = document.createElement("img"); im.loading = "lazy"; im.alt = ""; im.referrerPolicy = "no-referrer"; im.src = c.logo; im.onerror = initial; th.appendChild(im); th.insertAdjacentHTML("beforeend", PLAY); } else initial();
+  const info = document.createElement("div"); info.className = "info";
+  const nm = document.createElement("div"); nm.className = "nm"; nm.textContent = c.name; nm.title = c.name;
+  const sub = document.createElement("div"); sub.className = "sub";
+  sub.textContent = [cName(c.country), catName(c.cats[0])].filter(Boolean).join(" • ");
+  info.append(nm, sub); open.append(th, info);
+  const fv = document.createElement("button"); fv.className = "fav"; fv.dataset.u = c.url; fv.setAttribute("aria-label","مفضلة");
+  fv.setAttribute("aria-pressed", favs.has(c.url)); fv.textContent = favs.has(c.url) ? "★" : "☆";
+  card.append(open, fv); return card;
+}
+function pushRecent(c){
+  recent = [{url:c.url}, ...recent.filter(r => r.url !== c.url)].slice(0, 12);
+  try{ localStorage.setItem("recent", JSON.stringify(recent)); }catch(e){}
+}
+function renderRecent(){
+  const box = $("recent");
+  const on = st.cat === "all" && !st.country && !st.q.trim() && recent.length;
+  let items = [];
+  if(on){ const m = new Map(ALL.map(c => [c.url, c])); items = recent.map(r => m.get(r.url)).filter(Boolean); }
+  box.innerHTML = ""; box.hidden = !items.length;
+  if(!items.length) return;
+  const t = document.createElement("h3"); t.textContent = "شاهدتها مؤخراً"; box.appendChild(t);
+  const row = document.createElement("div"); row.className = "rrow";
+  items.forEach(c => row.appendChild(makeCard(c, -1)));
+  box.appendChild(row);
+}
+const EMPTY_ICON = '<svg class="ico" viewBox="0 0 24 24" style="width:44px;height:44px"><rect x="3" y="5" width="18" height="13" rx="2"/><path d="M8 21h8M12 18v3"/></svg>';
+function apply(){
+  const q = st.q.trim().toLowerCase();
+  view = ALL.filter(c =>
+    (st.cat === "all" || (st.cat === "fav" ? favs.has(c.url) : c.cats.includes(st.cat))) &&
+    (!st.country || c.country === st.country) &&
+    (!q || c.name.toLowerCase().includes(q)));
+  if(st.sort === "name") view.sort((a, b) => coll.compare(a.name, b.name));
+  const ct = st.cat === "all" ? "" : st.cat === "fav" ? "المفضلة" : catName(st.cat);
+  $("h").textContent = [ct, st.country ? cName(st.country) : ""].filter(Boolean).join(" • ") || "جميع القنوات";
+  $("count").textContent = view.length.toLocaleString("ar-EG") + " قناة";
+  $("grid").innerHTML = ""; shown = 0;
+  renderRecent();
+  if(!view.length){
+    $("grid").innerHTML = '<div class="empty">' + EMPTY_ICON + '<p>' + (st.cat === "fav" ? "لم تضف قنوات إلى المفضلة بعد.<br>اضغط على النجمة في أي قناة لإضافتها." : "لا توجد قنوات مطابقة للبحث.") + '</p></div>';
+    return;
+  }
+  more();
+}
+function more(){
+  const frag = document.createDocumentFragment();
+  for(let i = shown; i < Math.min(shown + PAGE, view.length); i++) frag.appendChild(makeCard(view[i], i));
+  shown = Math.min(shown + PAGE, view.length);
+  $("grid").appendChild(frag);
+}
+
+new IntersectionObserver(es => { if(es[0].isIntersecting && shown < view.length) more(); }, {rootMargin:"600px"}).observe($("sentinel"));
+
+function toggleFav(u){
+  favs.has(u) ? favs.delete(u) : favs.add(u);
+  toast(favs.has(u) ? "أضيفت إلى المفضلة" : "أزيلت من المفضلة");
+  saveFavs();
+  const b = $("favbtn"); if(b) b.lastChild.textContent = favs.size.toLocaleString("ar-EG");
+  if(st.cat === "fav") apply();
+  else document.querySelectorAll('.fav[data-u]').forEach(x => { if(x.dataset.u === u){ const on = favs.has(u); x.setAttribute("aria-pressed", on); x.textContent = on ? "★" : "☆"; } });
+}
+
+$("grid").addEventListener("click", e => {
+  const f = e.target.closest(".fav"); if(f){ toggleFav(f.dataset.u); if($("modal").classList.contains("open")) pfavUpdate(); return; }
+  const o = e.target.closest(".open"); if(o) openAt(+o.dataset.i);
+});
+$("recent").addEventListener("click", e => {
+  const f = e.target.closest(".fav"); if(f){ toggleFav(f.dataset.u); return; }
+  const o = e.target.closest(".open"); if(!o) return;
+  const i = view.findIndex(x => x.url === o.dataset.u); if(i >= 0) openAt(i);
+});
+$("sort").addEventListener("change", e => { st.sort = e.target.value; apply(); });
+let dense = false; try{ dense = localStorage.getItem("dense") === "1"; }catch(e){}
+const setDense = () => $("grid").classList.toggle("dense", dense);
+$("dense").onclick = () => { dense = !dense; try{ localStorage.setItem("dense", dense ? "1" : "0"); }catch(e){} setDense(); };
+window.addEventListener("scroll", () => $("totop").classList.toggle("show", window.scrollY > 700), {passive:true});
+$("totop").onclick = () => window.scrollTo({top:0});
+document.addEventListener("keydown", e => {
+  if(e.key === "/" && !/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName) && !$("modal").classList.contains("open")){ e.preventDefault(); $("q").focus(); }
+});
+$("cats").addEventListener("click", e => {
+  const b = e.target.closest("button"); if(!b) return;
+  if(b.dataset.mode){ st.mode = b.dataset.mode; buildNav(); return; }
+  const kd = b.dataset.kind, k = b.dataset.k;
+  if(kd === "all"){ st.cat = "all"; st.country = ""; }
+  else if(kd === "fav") st.cat = "fav";
+  else if(kd === "cat") st.cat = k;
+  else { st.cat = "all"; st.country = k; }
+  $("country").value = st.country;
+  buildNav(); apply(); window.scrollTo({top:0});
+});
+let t; $("q").addEventListener("input", e => { clearTimeout(t); t = setTimeout(() => { st.q = e.target.value; apply(); }, 200); });
+$("country").addEventListener("change", e => { st.country = e.target.value; buildNav(); apply(); });
+$("refresh").onclick = () => load(true);
+/* player */
+const v = $("v"), stage = $("stage");
+const LIBS = {mpegts:"https://cdn.jsdelivr.net/npm/mpegts.js@1.7.3/dist/mpegts.js", dash:"https://cdnjs.cloudflare.com/ajax/libs/dashjs/4.7.4/dash.all.min.js"};
+const libs = {};
+const loadLib = k => libs[k] || (libs[k] = new Promise((res, rej) => { const s = document.createElement("script"); s.src = LIBS[k]; s.onload = res; s.onerror = () => rej(new Error("lib")); document.head.appendChild(s); }));
+const LABEL = {hls:"HLS", mpegts:"MPEG-TS", dash:"DASH", native:"أصلي"};
+const IC = {
+  play:'<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>',
+  pause:'<svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>',
+  vol:'<svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9zm13.5 3A4.5 4.5 0 0 0 14 8v8a4.5 4.5 0 0 0 2.5-4z"/></svg>',
+  mute:'<svg viewBox="0 0 24 24"><path d="M16.5 12A4.5 4.5 0 0 0 14 8v2.2l2.5 2.5zM19 12a7 7 0 0 1-.9 3.4l1.5 1.5A9 9 0 0 0 21 12a9 9 0 0 0-7-8.8v2.1A7 7 0 0 1 19 12zM4.3 3L3 4.3 7.7 9H3v6h4l5 5v-6.7l4.3 4.3a7 7 0 0 1-2.3 1.2v2.1a9 9 0 0 0 3.7-1.9l2 2 1.3-1.3L4.3 3zM12 4L9.9 6.1 12 8.2z"/></svg>',
+  pip:'<svg viewBox="0 0 24 24"><path d="M19 7h-8v6h8zm4-4H1v18h22zm-2 16.01H3V4.98h18z"/></svg>',
+  fs:'<svg viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7zm-2-4h2V7h3V5H5zm12 7h-3v2h5v-5h-2zM14 5v2h3v3h2V5z"/></svg>'
+};
+let eng = null, chain = [], ci = 0, attempt = 0, timer = null, idleT = null, lastErr = "";
+let PROXY = ""; try{ PROXY = localStorage.getItem("proxy") || ""; }catch(e){}
+const pu = u => PROXY ? PROXY + encodeURIComponent(u) : u;
+const proxyLabel = () => { $("proxy").classList.toggle("on", !!PROXY); $("proxy").title = PROXY ? "الوسيط مفعّل" : "وسيط التشغيل"; };
+proxyLabel();
+
+function chainFor(url){
+  const p = url.split("?")[0].toLowerCase();
+  if(p.endsWith(".m3u8")) return ["hls","native"];
+  if(p.endsWith(".mpd")) return ["dash"];
+  if(/\.(ts|flv)$/.test(p)) return ["mpegts","native"];
+  return ["hls","mpegts","native"];
+}
+function overlay(mode, msg){
+  const o = $("ov");
+  if(!mode){ o.className = "ov"; o.innerHTML = ""; return; }
+  o.className = "ov show"; o.innerHTML = "";
+  if(mode === "load"){ const s = document.createElement("div"); s.className = "spin"; o.appendChild(s); }
+  if(msg){ const p = document.createElement("p"); p.textContent = msg; o.appendChild(p); }
+  if(mode === "err"){
+    const row = document.createElement("div"); row.className = "row";
+    const b = document.createElement("button"); b.className = "btn primary"; b.textContent = "إعادة المحاولة"; b.onclick = () => openAt(cur);
+    const c = document.createElement("button"); c.className = "btn"; c.textContent = "نسخ الرابط"; c.onclick = () => $("copy").click();
+    row.append(b, c); o.appendChild(row);
+  }
+}
+function teardown(){
+  clearTimeout(timer);
+  if(eng){ try{ eng.destroy(); }catch(e){} eng = null; }
+  $("quality").hidden = true;
+  v.pause(); v.removeAttribute("src"); v.load();
+}
+function fail(a){
+  if(a !== attempt) return;
+  ci++;
+  if(ci < chain.length) run();
+  else {
+    teardown();
+    let msg = "تعذّر تشغيل هذه القناة.";
+    if(lastErr){
+      msg += "\nالسبب التقني: " + lastErr;
+      if(/HTTP 0|LoadError/.test(lastErr)) msg += "\nغالباً الخادم يمنع التشغيل من المتصفح (CORS) أو القناة متوقفة. انسخ الرابط وشغّله في VLC، أو فعّل «وسيط».";
+    }
+    overlay("err", msg);
+  }
+}
+function run(){
+  teardown();
+  const a = ++attempt, name = chain[ci], url = pu(view[cur].url);
+  $("etag").textContent = LABEL[name];
+  overlay("load", "جارٍ الاتصال بالبث...");
+  timer = setTimeout(() => fail(a), 20000);
+  start(name, url, a).catch(() => fail(a));
+}
+async function start(name, url, a){
+  if(name === "hls"){
+    if(window.Hls && Hls.isSupported()){
+      const h = new Hls({lowLatencyMode:true, enableWorker:true, maxBufferLength:30});
+      let net = 0, med = 0;
+      h.on(Hls.Events.MANIFEST_PARSED, () => buildQuality(h));
+      h.on(Hls.Events.ERROR, (_, d) => {
+        if(!d.fatal || a !== attempt) return;
+        if(!lastErr) lastErr = d.details + (d.response && d.response.code !== undefined ? " (HTTP " + d.response.code + ")" : "");
+        if(/manifest/i.test(d.details)) return fail(a);
+        if(d.type === Hls.ErrorTypes.NETWORK_ERROR && net++ < 2) return h.startLoad();
+        if(d.type === Hls.ErrorTypes.MEDIA_ERROR && med++ < 2) return h.recoverMediaError();
+        fail(a);
+      });
+      h.loadSource(url); h.attachMedia(v);
+      eng = {destroy: () => h.destroy()};
+    } else if(v.canPlayType("application/vnd.apple.mpegurl")){
+      v.src = url; eng = {destroy(){}};
+    } else throw new Error("no hls");
+  } else if(name === "mpegts"){
+    await loadLib("mpegts");
+    if(a !== attempt) return;
+    if(!mpegts.isSupported()) throw new Error("no mpegts");
+    const p = mpegts.createPlayer({type:"mse", isLive:true, url});
+    p.attachMediaElement(v);
+    p.on(mpegts.Events.ERROR, () => fail(a));
+    p.load();
+    eng = {destroy: () => { p.destroy(); }};
+  } else if(name === "dash"){
+    await loadLib("dash");
+    if(a !== attempt) return;
+    const d = dashjs.MediaPlayer().create();
+    d.on("error", () => fail(a));
+    d.initialize(v, url, true);
+    eng = {destroy: () => d.reset()};
+  } else {
+    v.src = url; eng = {destroy(){}};
+    v.onerror = () => fail(a);
+  }
+  v.play().catch(() => {});
+}
+function buildQuality(h){
+  const q = $("quality");
+  q.innerHTML = '<option value="-1">تلقائي</option>';
+  h.levels.forEach((l, i) => {
+    const o = document.createElement("option"); o.value = i;
+    o.textContent = l.height ? l.height + "p" : Math.round(l.bitrate / 1000) + " kbps";
+    q.appendChild(o);
+  });
+  q.hidden = h.levels.length < 2;
+  q.onchange = () => { h.currentLevel = +q.value; };
+}
+
+/* video events */
+v.addEventListener("playing", () => { clearTimeout(timer); overlay(null); $("err").textContent = ""; });
+v.addEventListener("waiting", () => { if(!v.paused) overlay("load", "جارٍ التحميل..."); });
+v.addEventListener("canplay", () => { if(!$("ov").querySelector("button")) overlay(null); });
+v.addEventListener("play", syncCtl); v.addEventListener("pause", syncCtl); v.addEventListener("volumechange", syncCtl);
+function syncCtl(){
+  $("bplay").innerHTML = v.paused ? IC.play : IC.pause;
+  $("bmute").innerHTML = (v.muted || v.volume === 0) ? IC.mute : IC.vol;
+  $("vol").value = v.muted ? 0 : v.volume;
+  try{ localStorage.setItem("vol", v.volume); }catch(e){}
+}
+$("bpip").innerHTML = IC.pip; $("bfs").innerHTML = IC.fs;
+if(!document.pictureInPictureEnabled) $("bpip").style.display = "none";
+$("bplay").onclick = () => v.paused ? v.play().catch(()=>{}) : v.pause();
+$("bmute").onclick = () => { v.muted = !v.muted; };
+$("vol").oninput = e => { v.volume = +e.target.value; v.muted = v.volume === 0; };
+$("bpip").onclick = () => { document.pictureInPictureElement ? document.exitPictureInPicture() : v.requestPictureInPicture().catch(()=>{}); };
+function toggleFs(){
+  if(document.fullscreenElement) document.exitFullscreen();
+  else if(stage.requestFullscreen) stage.requestFullscreen();
+  else if(v.webkitEnterFullscreen) v.webkitEnterFullscreen();
+}
+$("bfs").onclick = toggleFs;
+v.addEventListener("click", () => $("bplay").click());
+v.addEventListener("dblclick", toggleFs);
+function wake(){
+  stage.classList.remove("idle"); clearTimeout(idleT);
+  idleT = setTimeout(() => { if(!v.paused) stage.classList.add("idle"); }, 3000);
+}
+["mousemove","touchstart","click"].forEach(ev => stage.addEventListener(ev, wake));
+try{ const sv = parseFloat(localStorage.getItem("vol")); if(!isNaN(sv)) v.volume = sv; }catch(e){}
+syncCtl();
+
+/* open / close */
+function pfavUpdate(){ const on = favs.has(view[cur].url); $("pfav").textContent = (on ? "★" : "☆") + " مفضلة"; }
+function openAt(i){
+  if(i < 0 || i >= view.length) return;
+  cur = i; const c = view[i]; pushRecent(c);
+  $("pname").textContent = c.name;
+  $("pmeta").textContent = [cName(c.country), c.cats.map(catName).join("، ")].filter(Boolean).join(" • ");
+  $("err").textContent = ""; pfavUpdate();
+  $("modal").classList.add("open"); wake();
+  if(!PROXY && location.protocol === "https:" && c.url.startsWith("http:")) $("err").textContent = "هذا الرابط HTTP وقد يحجبه المتصفح على صفحة HTTPS.";
+  chain = chainFor(c.url); ci = 0; lastErr = "";
+  run();
+}
+function stop(){
+  attempt++; teardown(); overlay(null);
+  $("modal").classList.remove("open");
+  if(document.fullscreenElement) document.exitFullscreen();
+}
+$("close").onclick = stop;
+$("copy").onclick = async () => {
+  const u = view[cur].url;
+  try{ await navigator.clipboard.writeText(u); toast("تم نسخ الرابط. الصقه في VLC عبر Media ثم Open Network Stream"); }
+  catch(e){ window.prompt("انسخ الرابط:", u); }
+};
+$("dl").onclick = () => {
+  const c = view[cur];
+  const blob = new Blob(["#EXTM3U\n#EXTINF:-1," + c.name + "\n" + c.url + "\n"], {type:"audio/x-mpegurl"});
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
+  a.download = (c.name.replace(/[\\/:*?"<>|]/g, "_") || "channel") + ".m3u"; a.click();
+};
+$("proxy").onclick = () => {
+  $("wtxt").value = $("wcode").textContent.trim();
+  $("pinput").value = PROXY;
+  $("pdlg").showModal();
+};
+$("pclose").onclick = () => $("pdlg").close();
+$("wcopy").onclick = async () => { try{ await navigator.clipboard.writeText($("wtxt").value); toast("تم نسخ كود الوسيط"); }catch(e){ $("wtxt").select(); } };
+$("psave").onclick = () => {
+  PROXY = $("pinput").value.trim();
+  try{ localStorage.setItem("proxy", PROXY); }catch(e){}
+  proxyLabel(); $("pdlg").close(); toast(PROXY ? "تم تفعيل الوسيط" : "تم تعطيل الوسيط");
+};
+$("prev").onclick = () => openAt(cur - 1);
+$("next").onclick = () => openAt(cur + 1);
+$("pfav").onclick = () => { toggleFav(view[cur].url); if(st.cat !== "fav") pfavUpdate(); };
+$("modal").onclick = e => { if(e.target.id === "modal") stop(); };
+document.addEventListener("keydown", e => {
+  if(!$("modal").classList.contains("open") || /INPUT|SELECT/.test(document.activeElement.tagName) && e.key !== "Escape") return;
+  const k = e.key;
+  if(k === "Escape" && !document.fullscreenElement) stop();
+  else if(k === " "){ e.preventDefault(); $("bplay").click(); }
+  else if(k === "m" || k === "M") v.muted = !v.muted;
+  else if(k === "f" || k === "F") toggleFs();
+  else if(k === "ArrowUp"){ e.preventDefault(); v.volume = Math.min(1, v.volume + .1); v.muted = false; }
+  else if(k === "ArrowDown"){ e.preventDefault(); v.volume = Math.max(0, v.volume - .1); }
+  else if(k === "ArrowLeft") openAt(cur + 1);
+  else if(k === "ArrowRight") openAt(cur - 1);
+});
+
+load(false);
+</script>
+</body>
+</html>
